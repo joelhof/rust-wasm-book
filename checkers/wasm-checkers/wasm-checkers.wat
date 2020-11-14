@@ -1,9 +1,11 @@
 (module
     (memory $mem 1)
+    (global $currentTurn (mut i32) (i32.const 0))
     (global $BLACK i32 (i32.const 1))
     (global $WHITE i32 (i32.const 2))
     (global $DE_CROWN i32 (i32.const 3))
     (global $CROWN i32 (i32.const 4))
+    ;;-------------- Linear Memory mapping functions ------------------
     (func $indexForPosition (param $x i32) (param $y i32) (result i32)
         (i32.add
             (i32.mul 
@@ -19,7 +21,7 @@
             (i32.const 4)
         )
     )
-    ;; Piece functions
+    ;; ------------- Piece functions ----------------------
     ;; Bitmask mapping:
     ;;  0   Unoccupied square
     ;;  1   Black
@@ -49,7 +51,7 @@
     (func $removeCrown (param $piece i32) (result i32)
         (i32.and (get_local $piece) (get_global $DE_CROWN))
     )
-    ;;--------------Board movement-----------------
+    ;;---------------------- Board movement ----------------------------------
     ;; Set a piece on the Board. Obs, not result type, a "void" method
     (func $setPiece (param $x i32) (param $y i32) (param $piece i32)
         (i32.store
@@ -86,6 +88,30 @@
             (i32.le_s (get_local $value) (get_local $high))
         )
     )
+    ;;------------------ Game state -----------------------------------------------
+    ;;get current turn owner
+    (func $getTurnOwner (result i32)
+        (get_global $currentTurn)
+    )
+    ;; Check if it's players turn
+    (func $isPlayersTurn (param $player i32) (result i32)
+        (i32.gt_s
+            (i32.and (get_local $player) (get_global $currentTurn))
+            (i32.const 0)
+        )
+    )
+    ;; At the end of a turn, switch the turn owner
+    (func $toggleTurnOwner
+        (if (i32.eq (call $getTurnOwner) (i32.const 1))
+            (then (call $setTurnOwner (i32.const 2)))
+            (else (call $setTurnOwner (i32.const 1)))
+        )
+    )
+    ;; Sets the turn owner
+    (func $setTurnOwner (param $player i32)
+        (set_global $currentTurn (get_local $player))
+    )
+
     (export "byteOffsetForPosition" (func $byteOffsetForPosition))
     (export "isCrowned" (func $isCrowned))
     (export "isWhite" (func $isWhite))
@@ -94,4 +120,9 @@
     (export "removeCrown" (func $removeCrown))
     (export "setPiece" (func $setPiece))
     (export "getPiece" (func $getPiece))
+    (export "getTurnOwner" (func $getTurnOwner))
+    (export "isPlayersTurn" (func $isPlayersTurn))
+    (export "toggleTurnOwner" (func $toggleTurnOwner))
+    (export "setTurnOwner" (func $setTurnOwner))
+
 )

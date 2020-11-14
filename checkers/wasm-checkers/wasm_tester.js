@@ -44,4 +44,13 @@ fetch('./checkers-test.wasm')
         } catch (error) {
             console.log("Requesting a piece outside the board is an error");
         }
+
+        console.log("The initial turn owner is 0: ", instance.exports.getTurnOwner());
+        instance.exports.setTurnOwner(black);
+        console.log("The first turn is black ", instance.exports.isPlayersTurn(black));
+        console.log("given that the current owner is black", instance.exports.getTurnOwner() == black);
+        console.log("when turn is over ", instance.exports.toggleTurnOwner());
+        console.log("then white is the turn owner ",
+            instance.exports.isPlayersTurn(white) && instance.exports.getTurnOwner() == white);
+        
     })
