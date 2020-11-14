@@ -1,6 +1,13 @@
 fetch('./checkers-test.wasm')
     .then(response => response.arrayBuffer())
-    .then(bytes => WebAssembly.instantiate(bytes))
+    .then(bytes => WebAssembly.instantiate(bytes, {
+        events: {
+            pieceCrowned: 
+                (x, y) => {
+                    console.log("A piece was crowned at ", [x, y]);
+                }
+        }
+    }))
     .then(results => {
         console.log("Wasm module loaded");
         instance = results.instance;
@@ -53,4 +60,11 @@ fetch('./checkers-test.wasm')
         console.log("then white is the turn owner ",
             instance.exports.isPlayersTurn(white) && instance.exports.getTurnOwner() == white);
         
+        console.log("white is crowned in row 7", instance.exports.shouldCrown(7, white) 
+            + " but not 6 " + instance.exports.shouldCrown(6, white));
+        
+        console.log("given a white piece at row 7");
+        instance.exports.setPiece(1, 7, white);
+        console.log("when white piece is crowned, webassembly host is notified");
+        instance.exports.crownPiece(1,7);
     })

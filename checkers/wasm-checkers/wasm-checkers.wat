@@ -1,5 +1,9 @@
 (module
+    (import "events" "pieceCrowned" 
+        (func $notify_piececrowned (param $x i32) (param $y i32))
+    )
     (memory $mem 1)
+
     (global $currentTurn (mut i32) (i32.const 0))
     (global $BLACK i32 (i32.const 1))
     (global $WHITE i32 (i32.const 2))
@@ -111,6 +115,39 @@
     (func $setTurnOwner (param $player i32)
         (set_global $currentTurn (get_local $player))
     )
+    ;;----------------- Game Rules --------------------------------------
+    ;; Should this piece be crowned?
+    ;; We crown black pieces in row 0 and white pieces in row 7
+    (func $shouldCrown (param $pieceRow i32) (param $piece i32) (result i32)
+        (i32.or
+            (i32.and
+                (i32.eq
+                    (get_local $pieceRow)
+                    (i32.const 0)
+                )
+                (call $isBlack (get_local $piece))
+            )
+            (i32.and
+                (i32.eq
+                    (get_local $pieceRow)
+                    (i32.const 7)
+                )
+                (call $isWhite (get_local $piece))
+            )
+        )
+    )
+    ;; Convert a piece into a crowned piece and notify wasm host
+    (func $crownPiece (param $x i32) (param $y i32)
+        (local $piece i32)
+        (set_local $piece (call $getPiece (get_local $x) (get_local $y)))
+        (call $setPiece (get_local $x) (get_local $y)
+            (call $addCrown (get_local $piece))
+        )
+        (call $notify_piececrowned (get_local $x) (get_local $y))
+    )
+    (func $distance (param $x i32) (param $y i32) (result i32)
+        (i32.sub (get_local $x) (get_local $y))
+    )
 
     (export "byteOffsetForPosition" (func $byteOffsetForPosition))
     (export "isCrowned" (func $isCrowned))
@@ -124,5 +161,6 @@
     (export "isPlayersTurn" (func $isPlayersTurn))
     (export "toggleTurnOwner" (func $toggleTurnOwner))
     (export "setTurnOwner" (func $setTurnOwner))
-
+    (export "shouldCrown" (func $shouldCrown))
+    (export "crownPiece" (func $crownPiece))
 )
