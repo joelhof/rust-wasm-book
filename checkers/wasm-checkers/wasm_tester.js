@@ -29,4 +29,19 @@ fetch('./checkers-test.wasm')
         console.debug("White can be crowned", instance.exports.isCrowned(instance.exports.addCrown(white)));        
         console.debug("Black can be crowned", instance.exports.isCrowned(instance.exports.addCrown(black)));
 
+        console.debug("given a piece at 3,4: ", instance.exports.setPiece(3, 4, white));
+        console.debug("then piece " + white + " is at 3,4: ", instance.exports.getPiece(3,4));
+        console.debug("white piece is not at 4,3", instance.exports.getPiece(4,3));
+        try {
+            instance.exports.getPiece(0, 8);
+            console.log("This should not happen");            
+        } catch (error) {
+            console.log("Requesting a piece outside the board is an error");
+        }
+        try {
+            instance.exports.getPiece(-1, 4);
+            console.log("This should not happen");            
+        } catch (error) {
+            console.log("Requesting a piece outside the board is an error");
+        }
     })
