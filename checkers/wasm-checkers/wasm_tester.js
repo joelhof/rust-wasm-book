@@ -17,16 +17,17 @@ fetch('./checkers-test.wasm')
         instance = results.instance;
         console.log('instance', instance);
         
-        console.log("Calling offset");
+/*         console.log("Calling offset");
         var pos = [3,4]
         var offset = instance.exports.byteOffsetForPosition(...pos);
         console.log("offset for position " + pos + " is " + offset);
-
+ */
         var white = 2;
         var black = 1;
         var crownedWhite = 6;
         var crownedBlack = 5;
 
+/*
         console.debug("White is white?", instance.exports.isWhite(white));
         console.debug("Black is black?", instance.exports.isBlack(black));
         console.debug("Black is white?", instance.exports.isWhite(black));
@@ -71,18 +72,35 @@ fetch('./checkers-test.wasm')
         instance.exports.setPiece(1, 7, white);
         console.log("when white piece is crowned, webassembly host is notified");
         instance.exports.crownPiece(1, 7);
-
+*/
         console.log("init game boards");
         instance.exports.initBoard();
         console.log("intial player is black", instance.exports.isPlayersTurn(black) == 1);
-        var x = [0,1,2,3,4,5,6,7];
-        var y = [0,1,2,3,4,5,6,7];
-        var board = [];
-        x.map(i => {
-            var row = y.map(j =>
-                instance.exports.getPiece(j,i)
-            ).reduce((pV,cV) => [...pV, cV], []);
-            board.push(row);
-        });
-        console.table(board);
-    })
+        printBoard(instance);
+
+        whiteMoves = [[0,2,1,3],[0,0,0,1],[1,1,1,0],[1,0,1,1]];
+        blackMoves = [[0,5,0,4],[0,4,0,3],[0,3,0,2],[0,2,0,0]];
+        for (i = 0; i < blackMoves.length; i++) {
+            console.log("current player is", instance.exports.getTurnOwner());
+            console.log(...blackMoves[i], instance.exports.move(...blackMoves[i]));
+            console.log("piece at ", blackMoves[i].slice(2), instance.exports.getPiece(...blackMoves[i].slice(2)));
+            console.log("current player is", instance.exports.getTurnOwner());
+            console.log(...whiteMoves[i], instance.exports.move(...whiteMoves[i]));
+            printBoard(instance);
+        }
+       
+        console.log("turn owner is black", instance.exports.getTurnOwner() == black);
+    }).catch(console.error);
+
+function printBoard(instance) {
+    var x = [0, 1, 2, 3, 4, 5, 6, 7];
+    var y = [0, 1, 2, 3, 4, 5, 6, 7];
+    var board = [];
+    x.map(i => {
+        var row = y.map(j => instance.exports.getPiece(j, i)
+        ).reduce((pV, cV) => [...pV, cV], []);
+        board.push(row);
+    });
+    console.table(board);
+    return board;
+}
