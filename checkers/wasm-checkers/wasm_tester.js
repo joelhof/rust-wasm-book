@@ -5,6 +5,10 @@ fetch('./checkers-test.wasm')
             pieceCrowned: 
                 (x, y) => {
                     console.log("A piece was crowned at ", [x, y]);
+                },
+            pieceMoved: 
+                (fromX, fromY, toX, toY) => {
+                    console.log("A piece moved from ", [fromX,fromY], "to", [toX,toY]);
                 }
         }
     }))
@@ -66,5 +70,19 @@ fetch('./checkers-test.wasm')
         console.log("given a white piece at row 7");
         instance.exports.setPiece(1, 7, white);
         console.log("when white piece is crowned, webassembly host is notified");
-        instance.exports.crownPiece(1,7);
+        instance.exports.crownPiece(1, 7);
+
+        console.log("init game boards");
+        instance.exports.initBoard();
+        console.log("intial player is black", instance.exports.isPlayersTurn(black) == 1);
+        var x = [0,1,2,3,4,5,6,7];
+        var y = [0,1,2,3,4,5,6,7];
+        var board = [];
+        x.map(i => {
+            var row = y.map(j =>
+                instance.exports.getPiece(j,i)
+            ).reduce((pV,cV) => [...pV, cV], []);
+            board.push(row);
+        });
+        console.table(board);
     })
