@@ -32,7 +32,7 @@ pub struct Coordinate(pub usize, pub usize);
 impl Coordinate {
     pub fn onBoard(self) -> bool {
         let Coordinate(x,y) = self;
-        x <= 7 && y <= 7
+        return x <= 7 && y <= 7
     }
 
     pub fn jumpTargetsFrom(&self) -> impl Iterator<Item = Coordinate> {
@@ -48,7 +48,7 @@ impl Coordinate {
         if x >= 2 {
             jumps.push(Coordinate(x - 2, y + 2));
         }
-        jumps.into_iter()
+        return jumps.into_iter()
     }
 
     pub fn moveTargetsFrom(&self) -> impl Iterator<Item = Coordinate> {
@@ -64,7 +64,7 @@ impl Coordinate {
         if y >= 1 {
             moves.push(Coordinate(x + 1, y - 1));
         }
-        moves.into_iter();
+        return moves.into_iter()
     }
 }
 
