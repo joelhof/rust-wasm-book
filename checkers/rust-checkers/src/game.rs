@@ -382,11 +382,11 @@ mod test {
             ]
         );
     }
-/*
+
     #[test]
     fn jump_targets() {
         let c1 = Coordinate(3, 3);
-        let targets = c1.jump_targets_from().collect::<Vec<Coordinate>>();
+        let targets = c1.jumpTargetsFrom().collect::<Vec<Coordinate>>();
         assert_eq!(
             targets,
             [
@@ -397,7 +397,7 @@ mod test {
             ]
         );
     }
-
+/*
     #[test]
     fn jump_moves_validation() {
         let mut engine = GameEngine::new();
