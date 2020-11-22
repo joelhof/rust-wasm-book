@@ -122,7 +122,9 @@ impl GameEngine {
     fn validJump(&self, piece: &GamePiece, pos: &Coordinate, target: &Coordinate) -> bool {
         let Coordinate(x1, y1) = *pos;
         let Coordinate(x2, y2) = *target;
-       
+        if !target.onBoard() || !pos.onBoard() {
+            return false;
+        } 
         // invalid if target is occupied
         if let Some(_) = self.board[x2][y2] {
             return false;
@@ -142,6 +144,9 @@ impl GameEngine {
     fn validMove(&self, piece: &GamePiece, pos: &Coordinate, target: &Coordinate) -> bool {
         let Coordinate(_x1, y1) = *pos;
         let Coordinate(x2, y2) = *target;
+        if !target.onBoard() || !pos.onBoard() {
+            return false;
+        } 
         if let Some(_occupant) = self.board[x2][y2] {
             return false;
         } else {
@@ -296,12 +301,12 @@ mod test {
             ]
         );
     }
-/*
+
     #[test]
     fn legal_moves_black() {
         let mut engine = GameEngine::new();
-        engine.initialize_pieces();
-        let moves = engine.legal_moves();
+        engine.initBoard();
+        let moves = engine.legalMoves();
         assert_eq!(
             moves,
             [
@@ -336,7 +341,7 @@ mod test {
             ]
         );
     }
-
+/*
     #[test]
     fn legal_moves_white() {
         let mut engine = GameEngine::new();
