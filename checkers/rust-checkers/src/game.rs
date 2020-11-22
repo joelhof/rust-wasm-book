@@ -39,4 +39,154 @@ impl GameEngine {
                 self.board[x][y] = Some(GamePiece::new(PieceColor::Black));
             });
     }
+
+    pub fn movePiece(&mut self, mv: &Move) -> Result<MoveResult, ()> {
+        let legalMoves = self.legalMoves();
+
+        if !legalMoves.contains(mv) {
+            return Err(());
+        }
+
+        let Coordinate(x1, y1) = mv.from;
+        let Coordinate(x2, y2) = mv.to;
+
+        let piece = self.board[x1][y1].unwrap();
+        let midPieceCoordinate = self.midpieceCoordinate(x1, y1, x2, y2);
+        if let Some(Coordinate(x, y)) = midPieceCoordinate {
+            self.board[x][y] = None;
+        }
+
+        self.board[x1][y1] = None;
+        self.board[x2][y2] = Some(piece);
+
+        let crowned = if self.shouldCrown(piece, mv.to) {
+            self.crownPieceAt(mv.to);
+            true
+        } else {
+            false
+        };
+
+        self.advanceTurn();
+        return Ok(MoveResult {
+            mv: mv.clone(),
+            crowned: crowned
+        });
+    }
+
+    fn legalMoves(&self) -> Vec<Move> {
+        let mut moves: Vec<Move> = Vec::new();
+        for col in 0..self.board[0].len() {
+            for row in 0..self.board[0].len() {
+                if let Some(piece) = self.board[col][row] {
+                    if piece.color == self.turnOwner {
+                        let pos = Coordinate(col, row);
+                        let mut validMoves = self.validMovesFrom(pos);
+                        moves.append(&mut validMoves);
+                    }
+                }
+            }
+        }
+        return moves;
+    }
+
+    fn validMovesFrom(&self, pos: Coordinate) -> Vec<Move> {
+        let Coordinate(x, y) = pos;
+        if let Some(piece) = self.board[x][y] {
+            let mut jumps = pos.jumpTargetsFrom()
+                .filter(|target| self.validJump(&piece, &pos, &target))
+                .map(|ref target| Move {
+                    from: pos.clone(),
+                    to: target.clone()
+                }).collect::<Vec<Move>>();
+            let mut moves = pos.moveTargetsFrom()
+                .filter(|target| self.validMove(&piece, &pos, &target))
+                .map(|ref target| Move {
+                    from: pos.clone(),
+                    to: target.clone()
+                }).collect::<Vec<Move>>();
+            jumps.append(&mut moves);
+            return jumps;
+        } else {
+            return Vec::new();
+        }
+    }
+
+    fn validJump(&self, piece: &GamePiece, pos: &Coordinate, target: &Coordinate) -> bool {
+        let Coordinate(x1, y1) = *pos;
+        let Coordinate(x2, y2) = *target;
+       
+        // invalid if target is occupied
+        if let Some(_) = self.board[x2][y2] {
+            return false;
+        } else {
+            // Jump is valid if square diagonally before target is occupied by an opponent piece
+            let midPieceCoordinate = self.midpieceCoordinate(x1, y1, x2, y2);
+            return match midPieceCoordinate {
+                None => false,
+                Some(_) if piece.crowned => true,
+                Some(_) if piece.color == PieceColor::Black => y2 < y1,
+                Some(_) if piece.color == PieceColor::White => y2 > y1,
+                Some(_) => false
+            }
+        }
+    }
+
+    fn validMove(&self, piece: &GamePiece, pos: &Coordinate, target: &Coordinate) -> bool {
+        let Coordinate(x1, y1) = *pos;
+        let Coordinate(x2, y2) = *target;
+        if let Some(occupant) = self.board[x2][y2] {
+            return false;
+        } else {
+            if piece.crowned {
+                return true;
+            } else {
+                if piece.color == PieceColor::Black {
+                    return y2 < y1;
+                } else {
+                    return y2 > y1;
+                }
+            }
+        };
+    }
+
+    fn midpieceCoordinate(&self, x1: usize, y1: usize, x2: usize, y2: usize) -> Option<Coordinate> {
+        let x3 = match x2.checked_sub(x1) {
+            Some(_) => x2 + 1,
+            None => x2 - 1,
+        };
+        let y3 = match y2.checked_sub(y1) {
+            Some(_) => y2 + 1,
+            None => y2 - 1,
+        };
+        let sourcePiece = self.board[x1][y1].unwrap();
+        return match self.board[x3][y3] {
+            None => None,
+            Some(opponent) if opponent.color == sourcePiece.color => None,
+            Some(opponent) if opponent.color != sourcePiece.color => Some(Coordinate(x3,y3)),
+            Some(_) => None
+        };
+    }
+
+    fn shouldCrown(&self, piece: GamePiece, destination: Coordinate) -> bool {
+        return match piece.color {
+            PieceColor::Black => destination.1 == 0,
+            PieceColor::White => destination.1 == 7
+        };
+    }
+
+    fn crownPieceAt(&mut self, pos: Coordinate) {
+        let Coordinate(x, y) = pos;
+        let piece = self.board[x][y].unwrap();
+        let crowned = GamePiece::crown(piece);
+        self.board[x][y] = Some(crowned);
+    }
+
+    fn advanceTurn(&mut self) {
+        let nextTurnOwner = match self.turnOwner {
+            PieceColor::Black => PieceColor::White,
+            PieceColor::White => PieceColor::Black
+        };
+        self.turnOwner = nextTurnOwner;
+        self.moveCount = self.moveCount + 1;
+    }
 }
