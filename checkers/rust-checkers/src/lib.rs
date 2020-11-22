@@ -31,6 +31,33 @@ pub extern "C" fn get_current_turn() -> i32 {
     return GamePiece::new(engine.currentTurn()).into();
 }
 
+extern "C" {
+    fn notify_piecemoved(fromX: i32, fromY: i32, toX: i32, toY: i32);
+    fn notify_piececrowned(x: i32, y: i32);
+}
+
+#[no_mangle]
+pub extern "C" fn move_piece(fx: i32, fy: i32, tx: i32, ty: i32) -> i32 {
+    let mut engine = GAME_ENGINE.write().unwrap();
+    let mv = Move::new((fx as usize, fy as usize), (tx as usize, ty as usize));
+    let res = engine.movePiece(&mv);
+    return match res {
+        Ok(moveResult) => {
+            unsafe {
+                notify_piecemoved(fx, fy, tx, ty);
+            }
+            if moveResult.crowned {
+                unsafe {
+                    notify_piececrowned(tx, ty);
+                }
+            }
+            1
+        },
+        Err(_) => 0
+    };
+}
+
+
 const PIECEFLAG_BLACK: u8 = 1;
 const PIECEFLAG_WHITE: u8 = 2;
 const PIECEFLAG_CROWN: u8 = 4;
