@@ -174,11 +174,12 @@ impl GameEngine {
         };
     }
 
-    fn crownPieceAt(&mut self, pos: Coordinate) {
+    fn crownPieceAt(&mut self, pos: Coordinate) -> bool {
         let Coordinate(x, y) = pos;
         let piece = self.board[x][y].unwrap();
         let crowned = GamePiece::crown(piece);
         self.board[x][y] = Some(crowned);
+        return true;
     }
 
     fn advanceTurn(&mut self) {
@@ -207,15 +208,15 @@ mod test {
         assert_eq!(res_nocrown, false);
     }
 
-/*     #[test]
+     #[test]
     fn mut_crown() {
         let mut engine = GameEngine::new();
-        engine.initialize_pieces();
-        let crowned = engine.crown_piece(Coordinate(1, 0));
+        engine.initBoard();
+        let crowned = engine.crownPieceAt(Coordinate(1, 0));
         assert!(crowned);
-        assert!(engine.is_crowned(Coordinate(1, 0)));
+        //assert!(engine.isCrowned(Coordinate(1, 0)));
     }
-
+/*
     #[test]
     fn advance_turn() {
         let mut engine = GameEngine::new();
