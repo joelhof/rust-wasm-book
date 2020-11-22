@@ -159,17 +159,17 @@ impl GameEngine {
 
     fn midpieceCoordinate(&self, x1: usize, y1: usize, x2: usize, y2: usize) -> Option<Coordinate> {
         let x3 = match x2.checked_sub(x1) {
-            Some(_) => x2 + 1,
-            None => x2 - 1,
+            Some(_) => x1 + 1,
+            None => x1 - 1,
+
         };
         let y3 = match y2.checked_sub(y1) {
-            Some(_) => y2 + 1,
-            None => y2 - 1,
+            Some(_) => y1 + 1,
+            None => y1 - 1,
         };
         let sourcePiece = self.board[x1][y1].unwrap();
         return match self.board[x3][y3] {
             None => None,
-            Some(opponent) if opponent.color == sourcePiece.color => None,
             Some(opponent) if opponent.color != sourcePiece.color => Some(Coordinate(x3,y3)),
             Some(_) => None
         };
@@ -265,16 +265,16 @@ mod test {
             ]
         );
     }
-/*
+
     #[test]
     fn valid_from() {
         let c1 = Coordinate(0, 5);
         let c2 = Coordinate(2, 5);
 
         let mut engine = GameEngine::new();
-        engine.initialize_pieces();
-        let m1 = engine.valid_moves_from(c1);
-        let m2 = engine.valid_moves_from(c2);
+        engine.initBoard();
+        let m1 = engine.validMovesFrom(c1);
+        let m2 = engine.validMovesFrom(c2);
         assert_eq!(
             m1,
             [Move {
@@ -296,7 +296,7 @@ mod test {
             ]
         );
     }
-
+/*
     #[test]
     fn legal_moves_black() {
         let mut engine = GameEngine::new();
