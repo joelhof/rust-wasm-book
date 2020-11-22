@@ -24,6 +24,13 @@ pub extern "C" fn get_piece(x: i32, y: i32) -> i32 {
     };
 }
 
+#[no_mangle]
+pub extern "C" fn get_current_turn() -> i32 {
+    let engine = GAME_ENGINE.read().unwrap();
+
+    return GamePiece::new(engine.currentTurn()).into();
+}
+
 const PIECEFLAG_BLACK: u8 = 1;
 const PIECEFLAG_WHITE: u8 = 2;
 const PIECEFLAG_CROWN: u8 = 4;
