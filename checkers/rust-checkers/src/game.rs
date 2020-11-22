@@ -234,15 +234,15 @@ mod test {
         assert_eq!(engine.currentTurn(), PieceColor::Black);
         assert_eq!(engine.moveCount(), 2);
     }
-/*
+
     #[test]
     fn move_targets() {
         let c1 = Coordinate(0, 5);
-        let targets = c1.move_targets_from().collect::<Vec<Coordinate>>();
+        let targets = c1.moveTargetsFrom().collect::<Vec<Coordinate>>();
         assert_eq!(targets, [Coordinate(1, 6), Coordinate(1, 4)]);
 
         let c2 = Coordinate(1, 6);
-        let targets2 = c2.move_targets_from().collect::<Vec<Coordinate>>();
+        let targets2 = c2.moveTargetsFrom().collect::<Vec<Coordinate>>();
         assert_eq!(
             targets2,
             [
@@ -254,7 +254,7 @@ mod test {
         );
 
         let c3 = Coordinate(2, 5);
-        let targets3 = c3.move_targets_from().collect::<Vec<Coordinate>>();
+        let targets3 = c3.moveTargetsFrom().collect::<Vec<Coordinate>>();
         assert_eq!(
             targets3,
             [
@@ -265,7 +265,7 @@ mod test {
             ]
         );
     }
-
+/*
     #[test]
     fn valid_from() {
         let c1 = Coordinate(0, 5);

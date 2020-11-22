@@ -58,11 +58,11 @@ impl Coordinate {
             moves.push(Coordinate(x - 1, y + 1));
         }
         moves.push(Coordinate(x + 1, y + 1));
-        if x >= 1 && y >= 1 {
-            moves.push(Coordinate(x - 1, y - 1));
-        }
         if y >= 1 {
             moves.push(Coordinate(x + 1, y - 1));
+        }
+        if x >= 1 && y >= 1 {
+            moves.push(Coordinate(x - 1, y - 1));
         }
         return moves.into_iter()
     }
