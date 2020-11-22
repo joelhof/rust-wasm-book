@@ -81,6 +81,15 @@ impl GameEngine {
         return self.moveCount;
     }
 
+    pub fn getPiece(&self, pos: Coordinate) -> Result<Option<GamePiece>, ()> {
+        let Coordinate(x, y) = pos;
+        if pos.onBoard() {
+            return Ok(self.board[x][y]);
+        } else {
+            return Err(());
+        }
+    } 
+
     fn legalMoves(&self) -> Vec<Move> {
         let mut moves: Vec<Move> = Vec::new();
         for col in 0..self.board[0].len() {

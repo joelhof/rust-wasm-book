@@ -12,6 +12,38 @@ lazy_static! {
     };
 }
 
+#[no_mangle]
+pub extern "C" fn get_piece(x: i32, y: i32) -> i32 {
+    let engine = GAME_ENGINE.read().unwrap();
+
+    let piece = engine.getPiece(Coordinate(x as usize, y as usize));
+    return match piece {
+        Ok(Some(p)) => p.into(),
+        Ok(None) => -1,
+        Err(_) => -1
+    };
+}
+
+const PIECEFLAG_BLACK: u8 = 1;
+const PIECEFLAG_WHITE: u8 = 2;
+const PIECEFLAG_CROWN: u8 = 4;
+
+impl Into<i32> for GamePiece {
+    
+fn into(self) -> i32 { 
+    let mut val: u8 = 0;
+    if self.color == PieceColor::Black {
+        val += PIECEFLAG_BLACK;
+    } else if self.color == PieceColor::White {
+        val += PIECEFLAG_WHITE;
+    }
+    if self.crowned {
+        val += PIECEFLAG_CROWN;
+    }
+
+    return val as i32;
+ }
+}
 #[cfg(test)]
 mod tests {
     #[test]
