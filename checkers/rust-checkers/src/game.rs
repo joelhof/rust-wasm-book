@@ -73,6 +73,14 @@ impl GameEngine {
         });
     }
 
+    pub fn currentTurn(&self) -> PieceColor {
+        self.turnOwner
+    }
+
+    pub fn moveCount(&self) -> u32 {
+        return self.moveCount;
+    }
+
     fn legalMoves(&self) -> Vec<Move> {
         let mut moves: Vec<Move> = Vec::new();
         for col in 0..self.board[0].len() {
@@ -216,17 +224,17 @@ mod test {
         assert!(crowned);
         //assert!(engine.isCrowned(Coordinate(1, 0)));
     }
-/*
+
     #[test]
     fn advance_turn() {
         let mut engine = GameEngine::new();
-        engine.advance_turn();
-        assert_eq!(engine.current_turn(), PieceColor::White);
-        engine.advance_turn();
-        assert_eq!(engine.current_turn(), PieceColor::Black);
-        assert_eq!(engine.move_count(), 2);
+        engine.advanceTurn();
+        assert_eq!(engine.currentTurn(), PieceColor::White);
+        engine.advanceTurn();
+        assert_eq!(engine.currentTurn(), PieceColor::Black);
+        assert_eq!(engine.moveCount(), 2);
     }
-
+/*
     #[test]
     fn move_targets() {
         let c1 = Coordinate(0, 5);
