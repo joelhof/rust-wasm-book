@@ -438,12 +438,12 @@ mod test {
             ]
         );
     }
-/*
+
     #[test]
     fn test_basic_move() {
         let mut engine = GameEngine::new();
-        engine.initialize_pieces();
-        let res = engine.move_piece(&Move::new((0, 5), (1, 4)));
+        engine.initBoard();
+        let res = engine.movePiece(&Move::new((0, 5), (1, 4)));
         assert!(res.is_ok());
 
         let old = engine.board[0][5];
@@ -458,9 +458,9 @@ mod test {
         );
 
         // fail to perform illegal move
-        let res = engine.move_piece(&Move::new((1, 4), (2, 4))); // can't move horiz
+        let res = engine.movePiece(&Move::new((1, 4), (2, 4))); // can't move horiz
         assert!(!res.is_ok());
         assert_eq!(engine.board[2][4], None);
     }
- */
+
 }
