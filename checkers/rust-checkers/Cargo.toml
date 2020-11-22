@@ -9,6 +9,9 @@ edition = "2015"
 [lib]
 crate-type = ["cdylib"]
 
+[profile.release]
+lto = true
+
 [dependencies]
 mut_static = "5.0.0"
 lazy_static = "1.0.2"
