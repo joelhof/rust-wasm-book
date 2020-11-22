@@ -341,13 +341,13 @@ mod test {
             ]
         );
     }
-/*
+
     #[test]
     fn legal_moves_white() {
         let mut engine = GameEngine::new();
-        engine.initialize_pieces();
-        engine.advance_turn();
-        let moves = engine.legal_moves();
+        engine.initBoard();
+        engine.advanceTurn();
+        let moves = engine.legalMoves();
         assert_eq!(
             moves,
             [
@@ -382,7 +382,7 @@ mod test {
             ]
         );
     }
-
+/*
     #[test]
     fn jump_targets() {
         let c1 = Coordinate(3, 3);
