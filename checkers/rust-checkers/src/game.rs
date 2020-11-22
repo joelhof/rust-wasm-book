@@ -397,13 +397,13 @@ mod test {
             ]
         );
     }
-/*
+
     #[test]
     fn jump_moves_validation() {
         let mut engine = GameEngine::new();
-        engine.initialize_pieces();
+        engine.initBoard();
         engine.board[1][4] = Some(GamePiece::new(PieceColor::White)); // this should be jumpable from 0,5 to 2,3
-        let moves = engine.legal_moves();
+        let moves = engine.legalMoves();
         assert_eq!(
             moves,
             [
@@ -438,7 +438,7 @@ mod test {
             ]
         );
     }
-
+/*
     #[test]
     fn test_basic_move() {
         let mut engine = GameEngine::new();
