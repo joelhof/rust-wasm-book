@@ -49,7 +49,19 @@ dependencies = [
 name = "rust-rogue"
 version = "0.1.0"
 dependencies = [
+ "serde_derive",
  "wasm-bindgen",
+]
+
+[[package]]
+name = "serde_derive"
+version = "1.0.117"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cbd1ae72adb44aab48f325a02444a5fc079349a8d804c1fc922aed3f7454c74e"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]
