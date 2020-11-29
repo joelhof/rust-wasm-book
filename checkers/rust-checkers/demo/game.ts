@@ -4,11 +4,47 @@ const cols: number[] = [0,1,2,3,4,5,6,7];
 const BLACK = 1;
 const WHITE = 0;
 
-function pieceElement(color: number): Node {
+interface PieceMoveEvent extends DragEvent {
+    target: HTMLElement,
+    srcElement: HTMLElement
+}
+
+let movedPiece: HTMLElement;
+
+function pieceElement(color: number, x: number, y: number): Element {
     let div = document.createElement("div");
     div.classList.add("piece");
     div.classList.add(color === BLACK ? "black" : "white");
+    div.setAttribute("id", `${x},${y}`);
+    div.setAttribute("draggable", "true");
+    div.addEventListener("dragstart", pieceMoveStartHandler);
+    div.addEventListener("dragend", pieceMoveDragEndHandler);
     return div;
+}
+
+function pieceMoveStartHandler(event: PieceMoveEvent): void {
+    console.debug("Dragstart", event.srcElement);
+    event.dataTransfer.dropEffect = "move";
+    event.dataTransfer.setData("text/html", event.srcElement.toString());
+    movedPiece = event.srcElement;
+}
+
+function pieceMoveDragEndHandler(event: PieceMoveEvent): void {
+    console.debug("drag ended");
+    movedPiece = null;
+}
+
+function pieceMoveDropHandler(event: PieceMoveEvent): void {
+    console.log("Drop", event);
+    event.preventDefault();
+    const data = event.dataTransfer.getData("text/plain");
+    event.target.appendChild(movedPiece);
+}
+
+function pieceMoveDragOverHandler(event: PieceMoveEvent): void {
+    console.log("drag over", event);
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "move";
 }
 
 fetch('./rust_checkers.wasm')
@@ -26,20 +62,19 @@ fetch('./rust_checkers.wasm')
     .then(wasmInstance => {
         const get_current_turn = (wasmInstance.instance.exports.get_current_turn) as Function;
         const get_piece = (wasmInstance.instance.exports.get_piece) as Function;
+
         console.log("imported wasm");
         console.log("current turn is:", get_current_turn()  === BLACK ? "BLACK" : "WHITE");
-
         rows.forEach(x => {
             cols.forEach(y => {
-                const piece = get_piece(y, x);
-                if (piece > 0) {
-                    const square = document.getElementById(`${x},${y}`);
-                    square.appendChild(pieceElement(piece));
+                const square = document.getElementById(`${x},${y}`);
+                document.addEventListener("drop", pieceMoveDropHandler, false);
+                document.addEventListener("dragover", pieceMoveDragOverHandler, false);
+                const pieceCore = get_piece(y, x);
+                if (pieceCore > 0) {
+                    const piece: Element = pieceElement(pieceCore, x, y);
+                    square.appendChild(piece);
                 }
-                
-                //
-                // Add the ondragstart event listener
-                //element.addEventListener("dragstart", dragstart_handler);
             })
         });
 
