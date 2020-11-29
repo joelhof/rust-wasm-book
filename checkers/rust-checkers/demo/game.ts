@@ -2,7 +2,7 @@ const rows: number[] = [0,1,2,3,4,5,6,7];
 const cols: number[] = [0,1,2,3,4,5,6,7];
 
 const BLACK = 1;
-const WHITE = 0;
+const WHITE = 2;
 
 interface PieceMoveEvent extends DragEvent {
     target: HTMLElement,
@@ -47,13 +47,11 @@ function pieceMoveDropHandler(event: PieceMoveEvent): void {
     event.preventDefault();
     let from: number[] = movedPiece.id.split(",").map(coord => parseInt(coord));
     let to: number[] = event.target.id.split(",").map(coord => parseInt(coord));
-    let result = move_piece(from[0], from[1], to[0], to[1]);
+    let result = move_piece(from[1], from[0], to[1], to[0]);
     if (result > 0) {
         movedPiece.id = event.target.id;
         event.target.appendChild(movedPiece);
     }
-    console.log("piece at target", get_piece(to[0], to[1]), "piece at source", get_piece(from[0], from[1]),
-         "next move by", get_current_turn()  === BLACK ? "BLACK" : "WHITE");
 }
 
 function pieceMoveDragOverHandler(event: PieceMoveEvent): void {
@@ -79,7 +77,8 @@ fetch('./rust_checkers.wasm')
         move_piece = (wasmInstance.instance.exports.move_piece) as MovePiece;
 
         console.log("imported wasm");
-        console.log("current turn is:", get_current_turn()  === BLACK ? "BLACK" : "WHITE");
+        console.log("Starting player is:", get_current_turn()  === BLACK ? "BLACK" : "WHITE");
+
         const board = document.getElementById("board");
         rows.forEach(x => {
             cols.forEach(y => {
