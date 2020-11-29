@@ -9,7 +9,15 @@ interface PieceMoveEvent extends DragEvent {
     srcElement: HTMLElement
 }
 
+type GetCurrentTurn = () => number;
+type GetPiece = (x: number, y: number) => number;
+type MovePiece = (fromX: number, fromY: number, toX: number, toY: number) => number;
+
 let movedPiece: HTMLElement;
+
+let get_current_turn: GetCurrentTurn;
+let get_piece: GetPiece;
+let move_piece: MovePiece;
 
 function pieceElement(color: number, x: number, y: number): Element {
     let div = document.createElement("div");
@@ -35,14 +43,20 @@ function pieceMoveDragEndHandler(event: PieceMoveEvent): void {
 }
 
 function pieceMoveDropHandler(event: PieceMoveEvent): void {
-    console.log("Drop", event);
+    console.log("drop", event);
     event.preventDefault();
-    const data = event.dataTransfer.getData("text/plain");
-    event.target.appendChild(movedPiece);
+    let from: number[] = movedPiece.id.split(",").map(coord => parseInt(coord));
+    let to: number[] = event.target.id.split(",").map(coord => parseInt(coord));
+    let result = move_piece(from[0], from[1], to[0], to[1]);
+    if (result > 0) {
+        event.target.appendChild(movedPiece);
+    }
+    console.log("piece at target",get_piece(to[0], to[1]), "piece at source", get_piece(from[0], from[1]),
+         "next move by", get_current_turn()  === BLACK ? "BLACK" : "WHITE");
 }
 
 function pieceMoveDragOverHandler(event: PieceMoveEvent): void {
-    console.log("drag over", event);
+    //console.log("drag over", event);
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
 }
@@ -60,8 +74,9 @@ fetch('./rust_checkers.wasm')
         }
     }))
     .then(wasmInstance => {
-        const get_current_turn = (wasmInstance.instance.exports.get_current_turn) as Function;
-        const get_piece = (wasmInstance.instance.exports.get_piece) as Function;
+        get_current_turn = (wasmInstance.instance.exports.get_current_turn) as GetCurrentTurn;
+        get_piece = (wasmInstance.instance.exports.get_piece) as GetPiece;
+        move_piece = (wasmInstance.instance.exports.move_piece) as MovePiece;
 
         console.log("imported wasm");
         console.log("current turn is:", get_current_turn()  === BLACK ? "BLACK" : "WHITE");
