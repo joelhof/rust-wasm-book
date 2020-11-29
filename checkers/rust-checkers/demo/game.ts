@@ -49,14 +49,14 @@ function pieceMoveDropHandler(event: PieceMoveEvent): void {
     let to: number[] = event.target.id.split(",").map(coord => parseInt(coord));
     let result = move_piece(from[0], from[1], to[0], to[1]);
     if (result > 0) {
+        movedPiece.id = event.target.id;
         event.target.appendChild(movedPiece);
     }
-    console.log("piece at target",get_piece(to[0], to[1]), "piece at source", get_piece(from[0], from[1]),
+    console.log("piece at target", get_piece(to[0], to[1]), "piece at source", get_piece(from[0], from[1]),
          "next move by", get_current_turn()  === BLACK ? "BLACK" : "WHITE");
 }
 
 function pieceMoveDragOverHandler(event: PieceMoveEvent): void {
-    //console.log("drag over", event);
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
 }
@@ -80,13 +80,23 @@ fetch('./rust_checkers.wasm')
 
         console.log("imported wasm");
         console.log("current turn is:", get_current_turn()  === BLACK ? "BLACK" : "WHITE");
+        const board = document.getElementById("board");
         rows.forEach(x => {
             cols.forEach(y => {
-                const square = document.getElementById(`${x},${y}`);
-                document.addEventListener("drop", pieceMoveDropHandler, false);
-                document.addEventListener("dragover", pieceMoveDragOverHandler, false);
+                const square = document.createElement(`div`);
+                square.id = `${7 - x},${y}`;
+                square.classList.add("box");
+                square.classList.add(x % 2 == 0 ? "even" : "odd");
+                square.addEventListener("drop", pieceMoveDropHandler, false);
+                square.addEventListener("dragover", pieceMoveDragOverHandler, false);
+                board.appendChild(square);
+            })
+        });
+        rows.forEach(x => {
+            cols.forEach(y => {
                 const pieceCore = get_piece(y, x);
                 if (pieceCore > 0) {
+                    const square = document.getElementById(`${x},${y}`);
                     const piece: Element = pieceElement(pieceCore, x, y);
                     square.appendChild(piece);
                 }
