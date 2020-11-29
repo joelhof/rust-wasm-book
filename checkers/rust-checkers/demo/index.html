@@ -1,0 +1,125 @@
+<html>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
+    <title>Rust Rogue wasm</title>
+    <style>
+        body {
+            margin: 40px;
+        }
+
+        .box {
+            background-color: #444;
+            font-size: 150%;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .box.odd:nth-child(odd) {
+            background-color: #ccc;
+            color: #000;
+        }
+        .box.even:nth-child(even) {
+            background-color: #ccc;
+            color: #000;
+        }
+
+        .piece {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            margin: auto;
+        }
+
+        .black {
+            background-color: #e65525;
+            box-shadow: 0 0 0 3px #e78267;
+        }
+
+        .white {
+            background-color: #4287f5;
+            box-shadow: 0 0 0 3px #6ea2f5;
+        }
+
+        .wrapper {
+            display: grid;
+            grid-template-columns: repeat(8, 100px);
+            grid-template-rows: repeat(8, 100px);
+            background-color: #fff;
+            color: #444;
+        }
+    </style>
+    <body>
+        <div id=board class="wrapper">
+            <div id="0,0" class="box odd">
+                <div class="piece black"></div>
+            </div>
+            <div id="0,1" class="box odd">
+                <div class="piece white"></div>
+            </div>
+            <div id="0,2" class="box odd"></div>
+            <div id="0,3" class="box odd"></div>
+            <div id="0,4" class="box odd"></div>
+            <div id="0,5" class="box odd"></div>
+            <div id="0,6" class="box odd"></div>
+            <div id="0,7" class="box odd"></div>
+            <div id="1,0" class="box even"></div>
+            <div id="1,1" class="box even"></div>
+            <div id="1,2" class="box even"></div>
+            <div id="1,3" class="box even"></div>
+            <div id="1,4" class="box even"></div>
+            <div id="1,5" class="box even"></div>
+            <div id="1,6" class="box even"></div>
+            <div id="1,7" class="box even"></div>
+            <div id="2,0" class="box odd"></div>
+            <div id="2,1" class="box odd"></div>
+            <div id="2,2" class="box odd"></div>
+            <div id="2,3" class="box odd"></div>
+            <div id="2,4" class="box odd"></div>
+            <div id="2,5" class="box odd"></div>
+            <div id="2,6" class="box odd"></div>
+            <div id="2,7" class="box odd"></div>
+            <div id="3,0" class="box even"></div>
+            <div id="3,1" class="box even"></div>
+            <div id="3,2" class="box even"></div>
+            <div id="3,3" class="box even"></div>
+            <div id="3,4" class="box even"></div>
+            <div id="3,5" class="box even"></div>
+            <div id="3,6" class="box even"></div>
+            <div id="3,7" class="box even"></div>
+            <div id="4,0" class="box odd"></div>
+            <div id="4,1" class="box odd"></div>
+            <div id="4,2" class="box odd"></div>
+            <div id="4,3" class="box odd"></div>
+            <div id="4,4" class="box odd"></div>
+            <div id="4,5" class="box odd"></div>
+            <div id="4,6" class="box odd"></div>
+            <div id="4,7" class="box odd"></div>
+            <div id="5,0" class="box even "></div>
+            <div id="5,1" class="box even"></div>
+            <div id="5,2" class="box even"></div>
+            <div id="5,3" class="box even"></div>
+            <div id="5,4" class="box even"></div>
+            <div id="5,5" class="box even"></div>
+            <div id="5,6" class="box even"></div>
+            <div id="5,7" class="box even"></div>
+            <div id="6,0" class="box odd"></div>
+            <div id="6,1" class="box odd"></div>
+            <div id="6,2" class="box odd"></div>
+            <div id="6,3" class="box odd"></div>
+            <div id="6,4" class="box odd"></div>
+            <div id="6,5" class="box odd"></div>
+            <div id="6,6" class="box odd"></div>
+            <div id="6,7" class="box odd"></div>
+            <div id="7,0" class="box even"></div>
+            <div id="7,1" class="box even"></div>
+            <div id="7,2" class="box even"></div>
+            <div id="7,3" class="box even"></div>
+            <div id="7,4" class="box even"></div>
+            <div id="7,5" class="box even"></div>
+            <div id="7,6" class="box even"></div>
+            <div id="7,7" class="box even"></div>
+        </div>
+    </body>
+</html>
+
