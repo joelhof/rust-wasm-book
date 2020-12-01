@@ -19,10 +19,11 @@ let get_current_turn: GetCurrentTurn;
 let get_piece: GetPiece;
 let move_piece: MovePiece;
 
-function pieceElement(color: number, x: number, y: number): Element {
+function pieceElement(pieceCore: number, x: number, y: number): Element {
     let div = document.createElement("div");
     div.classList.add("piece");
-    div.classList.add(color === BLACK ? "black" : "white");
+    div.classList.add(pieceCore === BLACK ? "black" : "white"); // TODO use bitwise logic
+    // TODO set class crowned
     div.setAttribute("id", `${x},${y}`);
     div.setAttribute("draggable", "true");
     div.addEventListener("dragstart", pieceMoveStartHandler);
@@ -51,6 +52,7 @@ function pieceMoveDropHandler(event: PieceMoveEvent): void {
     if (result > 0) {
         movedPiece.id = event.target.id;
         event.target.appendChild(movedPiece);
+        removeCapturedPieces();
     }
 }
 
@@ -65,6 +67,7 @@ fetch('./rust_checkers.wasm')
         env: {
             notify_piececrowned: (x: number, y: number) => {
                 console.log("A piece was crowned at ", [x, y]);
+                //document.getElementById(`${x},${y}`).lastElementChild.classList.add("crowned");
             },
             notify_piecemoved: (fromX: number, fromY: number, toX: number, toY: number) => {
                 console.log("A piece moved from ", [fromX,fromY], "to", [toX,toY]);
@@ -91,19 +94,35 @@ fetch('./rust_checkers.wasm')
                 board.appendChild(square);
             })
         });
-        rows.forEach(x => {
-            cols.forEach(y => {
-                const pieceCore = get_piece(y, x);
-                if (pieceCore > 0) {
-                    const square = document.getElementById(`${x},${y}`);
-                    const piece: Element = pieceElement(pieceCore, x, y);
-                    square.appendChild(piece);
-                }
-            })
-        });
-
+        renderPieces();
     })
     .catch(error => {
         console.log(error);
     });
 
+function removeCapturedPieces() {
+    rows.forEach(x => {
+        cols.forEach(y => {
+            const pieceCore = get_piece(y, x);
+            const square = document.getElementById(`${x},${y}`);
+            if (pieceCore <= 0 && square.hasChildNodes()) {
+                console.log("piece captured! @", y, x);
+                square.removeChild(square.lastElementChild);
+            }
+        });
+    });
+}
+
+function renderPieces() {
+    rows.forEach(x => {
+        cols.forEach(y => {
+            const square = document.getElementById(`${x},${y}`);
+            const pieceCore = get_piece(y, x);
+            if (pieceCore > 0 && !square.hasChildNodes()) {
+                const piece: Element = pieceElement(pieceCore, x, y);
+                square.appendChild(piece);
+            } // TODO: remove captured
+              // TODO: render crowned
+        });
+    });
+}
