@@ -3,6 +3,7 @@ const cols: number[] = [0,1,2,3,4,5,6,7];
 
 const BLACK = 1;
 const WHITE = 2;
+const CROWN = 4;
 
 interface PieceMoveEvent extends DragEvent {
     target: HTMLElement,
@@ -23,7 +24,11 @@ function pieceElement(pieceCore: number, x: number, y: number): Element {
     let div = document.createElement("div");
     div.classList.add("piece");
     div.classList.add(pieceCore === BLACK ? "black" : "white"); // TODO use bitwise logic
-    // TODO set class crowned
+    
+    if ((pieceCore & CROWN) == CROWN) {
+        div.classList.add("crowned");
+    }
+    
     div.setAttribute("id", `${x},${y}`);
     div.setAttribute("draggable", "true");
     div.addEventListener("dragstart", pieceMoveStartHandler);
@@ -53,6 +58,7 @@ function pieceMoveDropHandler(event: PieceMoveEvent): void {
         movedPiece.id = event.target.id;
         event.target.appendChild(movedPiece);
         removeCapturedPieces();
+        setTurnOwner();
     }
 }
 
@@ -95,6 +101,7 @@ fetch('./rust_checkers.wasm')
             })
         });
         renderPieces();
+        setTurnOwner();
     })
     .catch(error => {
         console.log(error);
@@ -125,4 +132,16 @@ function renderPieces() {
               // TODO: render crowned
         });
     });
+}
+
+function setTurnOwner() {
+    const color = get_current_turn();
+    const element = document.getElementById(`turnOwner`);
+    if ((color & BLACK) === BLACK) {
+        element.classList.remove("white");
+        element.classList.add("black");
+    } else {
+        element.classList.remove("black");
+        element.classList.add("white");
+    }
 }

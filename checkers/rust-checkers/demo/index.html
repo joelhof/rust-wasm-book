@@ -38,12 +38,16 @@
             background-color: #e65525;
             box-shadow: 0 0 0 3px #e78267;
         }
-
+        .black .crowned {
+            box-shadow: 0 0 0 3px #e78267, 0 0 0 5px #e78267 inset;
+        }
         .white {
             background-color: #4287f5;
             box-shadow: 0 0 0 3px #6ea2f5;
         }
-
+        .white .crowned {
+            box-shadow: 0 0 0 3px #6ea2f5, 0 0 0 5px #6ea2f5 inset;
+        }
         .wrapper {
             display: grid;
             grid-template-columns: repeat(8, 100px);
@@ -53,6 +57,10 @@
         }
     </style>
     <body>
+        <div>
+            <h4>Current player</h4>
+            <div id=turnOwner class="piece"></div>
+        </div>
         <div id=board class="wrapper"></div>
         <script src="bootstrap.js"></script>
     </body>
