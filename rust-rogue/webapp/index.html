@@ -1,0 +1,61 @@
+<html>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
+    <title>Rust Rogue wasm</title>
+    <script src="https://cdn.jsdelivr.net/npm/rot-js@2/dist/rot.js"></script>
+    <style>
+        body {
+            margin: 40px;
+        }
+        .title {
+            text-align: center;
+        }
+        .tagline {
+            text-align: center;
+        }
+        .wrapper {
+            display: grid;
+            grid-gap: 10px;
+            grid-template-columns: [col1-start] 200px  [col2-start] 200px;
+            grid-template-rows: [row1-start] auto [row2-start] auto [row2-end];
+            background-color: #fff;
+            color: #444;
+        }
+        .box {
+            border-radius: 5px;
+            padding: 20px;
+            font-size: 150%;
+        }
+        .map {
+            background-color: #444;
+            color: #fff;
+            grid-column: col1-start / col3-start;
+            grid-row: row1-start ;
+        }
+        .hit-points {
+            color: #444;
+            background-color: #fff;
+            grid-column: col1-start;
+            grid-row: row2-start ;
+        }
+        .moves {
+            color: #444;
+            background-color: #fff;
+            grid-column: col2-start ;
+            grid-row: row2-start ;
+        }
+    </style>
+
+    <body>
+        <h1 class="title">Rogue</h1>
+        <h3 class=tagline>Brought to you by Rust, webassembly and ROT.js</h3>
+        <div class="wrapper">
+            <div class="box map" id="rogueCanvas">
+            </div>
+            <div class="box hit-points" id="hitpoint-box">
+                Hitpoints: 12 / 12
+            </div>
+            <div class="box moves" id="move-box">Moves: 2</div>
+        </div>
+        <script src="index.js"></script>
+    </body>
+</html>
